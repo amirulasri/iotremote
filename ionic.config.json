@@ -1,0 +1,7 @@
+{
+  "name": "iotremote",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
