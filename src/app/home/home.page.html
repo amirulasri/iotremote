@@ -1,20 +1,8 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+<ion-content>
+  <ion-item>
+    <ion-label>Text input</ion-label>
+    <ion-input placeholder="Enter text" [(ngModel)]="stateText"></ion-input>
+    <!-- <ion-button (click)="sendState()">Press here</ion-button> -->
+  </ion-item>
+  <ion-button (click)="sendActions(1, 17)">On</ion-button><ion-button (click)="sendActions(0, 17)">Off</ion-button><ion-button (click)="getListGPIO()">List GPIO</ion-button>
 </ion-content>
