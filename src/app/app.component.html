@@ -1,6 +1,6 @@
 <ion-app>
   <ion-router-outlet id="main-content"></ion-router-outlet>
-  <ion-menu contentId="main-content">
+  <ion-menu contentId="main-content" *ngIf="!hidemenu">
     <ion-header>
       <ion-toolbar>
         <ion-title style="height: 100px;">

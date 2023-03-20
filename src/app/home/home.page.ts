@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../socket.service';
 import { Socket } from 'socket.io-client';
+import { StorageService } from '../storage.service';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +12,17 @@ export class HomePage implements OnInit {
   stateText: string = "";
   private socketObject!: Socket;
   useremailaccount: string = "";
+  private accountToken: string = "";
 
   ngOnInit() {
+    this.storageService.getValue('token').then((token) => {
+      this.accountToken = token;
+    });
     this.useremailaccount = "swc3403@iotuser";
   }
 
-  constructor(private socketService: SocketService) {
+  constructor(private socketService: SocketService, private storageService: StorageService) {
+    this.socketService.initSocket();
     this.socketObject = this.socketService.getSocket();
     this.socketObject.on("connect", () => {
       console.log("CONNECTED TO SERVER: " + this.socketObject.id);
@@ -36,7 +42,7 @@ export class HomePage implements OnInit {
     this.socketObject.emit("sendactions", { action: 'iotcontrol', state: turnstate, gpio: gpionumber, emailaccount: this.useremailaccount });
     console.log("CALLED");
   }
-  
+
   getListGPIO() {
     console.log("CALLED");
     this.socketObject.emit("sendactions", { action: 'listgpio', emailaccount: this.useremailaccount });
