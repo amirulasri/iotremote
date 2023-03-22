@@ -5,6 +5,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Socket } from 'socket.io-client';
 import { SocketService } from '../socket.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface ResponseStateType {
   success: boolean,
@@ -12,24 +13,28 @@ interface ResponseStateType {
 }
 
 @Component({
-  selector: 'app-adddevice',
-  templateUrl: './adddevice.page.html',
-  styleUrls: ['./adddevice.page.scss'],
+  selector: 'app-editdevice',
+  templateUrl: './editdevice.page.html',
+  styleUrls: ['./editdevice.page.scss'],
 })
-export class AdddevicePage implements OnInit {
+export class EditdevicePage implements OnInit {
   private socketObject!: Socket;
-  newdeviceform: FormGroup;
+  editeddeviceform: FormGroup;
   private accountToken: string = "";
   private apiUrl = 'https://amirulasri.com/iotserver/api';
   private loadingSpinner: any;
   useremailaccount: any = localStorage.getItem('iotusername');
   listgpiovalue: number[] = [];
+  deviceid: any;
+  dataDevice: any = {};
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
+  constructor(private actRoute: ActivatedRoute, private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
     this.storageService.getValue('token').then((token) => {
       this.accountToken = token;
+      this.deviceid = this.actRoute.snapshot.paramMap.get('id');
+      this.fetchCurrentSelectedDevice(this.deviceid);
     });
-    this.newdeviceform = this.fb.group({
+    this.editeddeviceform = this.fb.group({
       devicename: ['', Validators.required],
       devicetype: ['', Validators.required],
       gpiopin: ['', Validators.required],
@@ -41,11 +46,12 @@ export class AdddevicePage implements OnInit {
     this.createLoadingSpinnerObj();
   }
 
-  addNewDevice() {
-    this.newdeviceform.value["token"] = this.accountToken;
-    if (this.newdeviceform.valid) {
+  editAddedDevice() {
+    this.editeddeviceform.value["token"] = this.accountToken;
+    this.editeddeviceform.value["id"] = this.deviceid;
+    if (this.editeddeviceform.valid) {
       this.loadingSpinner.present();
-      this.http.post<ResponseStateType>(`${this.apiUrl}/adddevices`, this.newdeviceform.value).subscribe(
+      this.http.post<ResponseStateType>(`${this.apiUrl}/updatedevices`, this.editeddeviceform.value).subscribe(
         (response) => {
           this.loadingSpinner.dismiss();
           if (response.success) {
@@ -69,8 +75,22 @@ export class AdddevicePage implements OnInit {
     }
   }
 
+  fetchCurrentSelectedDevice(deviceid: any) {
+    const jsontoken = { token: this.accountToken, id: deviceid };
+    this.http.post(`${this.apiUrl}/getdevices`, jsontoken).subscribe(
+      (response: any) => {
+        this.dataDevice = response;
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+        this.presentToast('Error occurred when fething list devices. Please try again');
+      }
+    );
+  }
+
   ionViewDidLeave() {
-    this.newdeviceform.patchValue({ gpiopin: '' });
+    this.editeddeviceform.patchValue({ gpiopin: '' });
   }
 
   async createLoadingSpinnerObj() {

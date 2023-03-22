@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../socket.service';
 import { Socket } from 'socket.io-client';
 import { StorageService } from '../storage.service';
+import { ToastController } from '@ionic/angular';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { TurnonstateService } from '../turnonstate.service';
 
 @Component({
   selector: 'app-home',
@@ -9,43 +12,46 @@ import { StorageService } from '../storage.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  stateText: string = "";
   private socketObject!: Socket;
-  useremailaccount: string = "";
+  useremailaccount: any = localStorage.getItem('iotusername');
   private accountToken: string = "";
+
+  private apiUrl = 'https://amirulasri.com/iotserver/api';
 
   ngOnInit() {
     this.storageService.getValue('token').then((token) => {
       this.accountToken = token;
     });
-    this.useremailaccount = "swc3403@iotuser";
   }
 
-  constructor(private socketService: SocketService, private storageService: StorageService) {
-    this.socketService.initSocket();
+  constructor(private http: HttpClient, private socketService: SocketService, private storageService: StorageService, private toastController: ToastController, public turnOnState: TurnonstateService) {
     this.socketObject = this.socketService.getSocket();
-    this.socketObject.on("connect", () => {
-      console.log("CONNECTED TO SERVER: " + this.socketObject.id);
-      this.socketObject.emit("getdetails", { clienttype: "remotesystem", receiveraccount: this.useremailaccount });
-      this.socketObject.emit("joincontrolroom", this.useremailaccount);
-    });
-    this.socketObject.on("receiveactions", (arg: any) => {
-      //LED.writeSync(arg);
-      console.log("RECEIVE: " + JSON.stringify(arg));
-    });
-    this.socketObject.on("receivelistgpio", (arg: any) => {
-      console.log("LIST GPIO: " + JSON.stringify(arg));
-    });
+  }
+
+  controlDevice(gpionumber: number, checked: any) {
+    console.log(gpionumber + ' ' + checked.detail.checked);
+    if (checked.detail.checked) {
+      this.sendActions(1, gpionumber);
+    }else{
+      this.sendActions(0, gpionumber);
+    }
   }
 
   sendActions(turnstate: number, gpionumber: number) {
     this.socketObject.emit("sendactions", { action: 'iotcontrol', state: turnstate, gpio: gpionumber, emailaccount: this.useremailaccount });
-    console.log("CALLED");
   }
 
   getListGPIO() {
-    console.log("CALLED");
     this.socketObject.emit("sendactions", { action: 'listgpio', emailaccount: this.useremailaccount });
+  }
+
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom'
+    });
+    toast.present();
   }
 
 }

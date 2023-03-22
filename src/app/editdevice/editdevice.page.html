@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Add Device</ion-title>
+    <ion-title>Edit Device</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,11 +11,11 @@
     </ion-card-header>
 
     <ion-card-content>
-      <form [formGroup]="newdeviceform" (ngSubmit)="addNewDevice()">
+      <form [formGroup]="editeddeviceform" (ngSubmit)="editAddedDevice()">
         <ion-list>
           <ion-item>
             <ion-label position="floating">Device name</ion-label>
-            <ion-input type="text" formControlName="devicename"></ion-input>
+            <ion-input value="{{dataDevice.name}}" type="text" formControlName="devicename"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label position="floating">Device type</ion-label>
@@ -28,7 +28,8 @@
           <ion-item>
             <ion-label position="floating">GPIO Pins</ion-label>
             <ion-select placeholder="GPIO Pins" formControlName="gpiopin">
-              <ion-select-option value="{{eachpin}}" *ngFor="let eachpin of listgpiovalue">{{eachpin}}</ion-select-option>
+              <ion-select-option value="{{eachpin}}"
+                *ngFor="let eachpin of listgpiovalue">{{eachpin}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -36,7 +37,7 @@
             <ion-input type="text" placeholder="Optional" formControlName="description"></ion-input>
           </ion-item>
           <br>
-          <ion-button type="submit" [disabled]="newdeviceform.invalid" expand="block">
+          <ion-button type="submit" [disabled]="editeddeviceform.invalid" expand="block">
             Add device
           </ion-button>
         </ion-list>

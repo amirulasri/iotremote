@@ -35,6 +35,15 @@ export class LoginPage implements OnInit {
     this.createLoadingSpinnerObj();
   }
 
+  ionViewWillEnter() {
+    this.storageService.getValue('token').then((token) => {
+      if(token != null && token != ''){
+        console.log('TOKEN AVAILABLE');
+        this.navCtrl.navigateRoot('/home');
+      }
+    });
+  }
+
   public login(): void {
     if (this.loginForm.valid) {
       this.loadingSpinner.present();
@@ -43,6 +52,7 @@ export class LoginPage implements OnInit {
           this.loadingSpinner.dismiss();
           if (response.success) {
             this.storageService.setValue('token', response.token);
+            localStorage.setItem('iotusername', this.loginForm.value['username']);
             this.navCtrl.navigateRoot('/home');
           } else {
             this.presentToast('Login failed: ' + response.desc);

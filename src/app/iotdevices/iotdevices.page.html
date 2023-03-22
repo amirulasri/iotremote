@@ -6,8 +6,11 @@
 
 <ion-content>
   <ion-list>
-    <ion-item>
-      <ion-label>Lamp 1</ion-label>
+    <ion-item *ngFor="let device of listDevices" [routerLink]="['/editdevice', device.id]" button detail="true" detail-icon="caret-forward-outline">
+      <ion-label>
+        <h3>{{device.name}}</h3>
+        <p>{{device.devicetype}} - GPIO: {{device.gpionumber}}</p>
+      </ion-label>
     </ion-item>
   </ion-list>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">

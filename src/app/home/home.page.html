@@ -5,10 +5,32 @@
 </ion-header>
 
 <ion-content>
-  <ion-item>
-    <ion-label>Text input</ion-label>
-    <ion-input placeholder="Enter text" [(ngModel)]="stateText"></ion-input>
-    <!-- <ion-button (click)="sendState()">Press here</ion-button> -->
-  </ion-item>
-  <ion-button (click)="sendActions(1, 17)">On</ion-button><ion-button (click)="sendActions(0, 17)">Off</ion-button><ion-button (click)="getListGPIO()">List GPIO</ion-button>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Switches</ion-card-title>
+      <ion-card-subtitle>Control all your device here</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+  <ion-grid>
+    <ion-row class="ion-no-padding">
+      <ion-col size="6" *ngFor="let item of turnOnState.listDevices" class="ion-no-padding">
+        <ion-card>
+          <div class="icondevice">
+            <span class="material-symbols-outlined">
+              {{item.devicetype === 'lamp' ? 'wall_lamp' : item.devicetype === 'fan' ? 'mode_fan' : 'developer_board'}}
+            </span>
+          </div>
+          <ion-card-header>
+            {{ item.name }}
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{item.devicetype === 'lamp' ? 'Lamp' : item.devicetype === 'fan' ? 'Fan' : 'Other'}}</p>
+            <div class="switchstyle">
+              <ion-toggle mode="ios" checked="{{item.turnOnState === 1 ? true : false}}" (ionChange)="controlDevice(item.gpionumber, $event)"></ion-toggle>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

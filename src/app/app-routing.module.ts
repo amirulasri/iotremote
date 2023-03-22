@@ -39,6 +39,10 @@ const routes: Routes = [
     path: 'adddevice',
     loadChildren: () => import('./adddevice/adddevice.module').then( m => m.AdddevicePageModule)
   },
+  {
+    path: 'editdevice/:id',
+    loadChildren: () => import('./editdevice/editdevice.module').then( m => m.EditdevicePageModule)
+  },
 ];
 
 @NgModule({

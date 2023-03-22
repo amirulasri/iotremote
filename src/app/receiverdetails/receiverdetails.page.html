@@ -1,9 +1,22 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>receiverdetails</ion-title>
+    <ion-title>Receiver</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card>
+    <ion-card-header>
+      <div class="mainicon">
+        <ion-icon name="radio-outline"></ion-icon>
+      </div>
+      <ion-card-title>IOT Receiver</ion-card-title>
+      <ion-card-subtitle>Profile: {{receiverDetail.emailaccount}}</ion-card-subtitle>
+      <ion-card-subtitle>Status: {{receiverDetail?.receiverdetail?.status}}</ion-card-subtitle>
+    </ion-card-header>
 
+    <ion-card-content>
+      This receiver used to control hardware devices such as relay, led and other connected device to GPIO Pin. Make sure this receiver is turned on before using this app.
+    </ion-card-content>
+  </ion-card>
 </ion-content>
