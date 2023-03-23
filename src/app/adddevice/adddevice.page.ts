@@ -5,6 +5,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Socket } from 'socket.io-client';
 import { SocketService } from '../socket.service';
+import { NavController } from '@ionic/angular';
 
 interface ResponseStateType {
   success: boolean,
@@ -25,7 +26,7 @@ export class AdddevicePage implements OnInit {
   useremailaccount: any = localStorage.getItem('iotusername');
   listgpiovalue: number[] = [];
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
+  constructor(private navCtrl: NavController, private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
     this.storageService.getValue('token').then((token) => {
       this.accountToken = token;
     });
@@ -50,6 +51,7 @@ export class AdddevicePage implements OnInit {
           this.loadingSpinner.dismiss();
           if (response.success) {
             this.presentToast('Add device successful');
+            this.navCtrl.back();
           } else {
             this.presentToast('Add device failed: ' + response.desc);
           }

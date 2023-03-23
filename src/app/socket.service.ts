@@ -14,7 +14,7 @@ export class SocketService {
   private receiverDetails: any[] = [];
 
   constructor(private storageService: StorageService, private turnOnState: TurnonstateService) {
-    this.socket = io('http://192.168.0.237:4000');
+    this.socket = io('http://amirulasri.com:4000');
     this.socket.on("connect", () => {
       console.log("CONNECTED TO SERVER: " + this.socket.id);
       this.socket.emit("getdetails", { clienttype: "remotesystem", receiveraccount: this.useremailaccount });

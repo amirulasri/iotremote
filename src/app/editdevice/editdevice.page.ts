@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Socket } from 'socket.io-client';
 import { SocketService } from '../socket.service';
 import { ActivatedRoute } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 interface ResponseStateType {
   success: boolean,
@@ -28,7 +29,7 @@ export class EditdevicePage implements OnInit {
   deviceid: any;
   dataDevice: any = {};
 
-  constructor(private actRoute: ActivatedRoute, private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
+  constructor(private navCtrl: NavController, private actRoute: ActivatedRoute, private fb: FormBuilder, private http: HttpClient, private toastController: ToastController, private loadingController: LoadingController, private storageService: StorageService, private socketService: SocketService) {
     this.storageService.getValue('token').then((token) => {
       this.accountToken = token;
       this.deviceid = this.actRoute.snapshot.paramMap.get('id');
@@ -55,18 +56,42 @@ export class EditdevicePage implements OnInit {
         (response) => {
           this.loadingSpinner.dismiss();
           if (response.success) {
-            this.presentToast('Add device successful');
+            this.presentToast('Modify device successful');
+            this.navCtrl.back();
           } else {
-            this.presentToast('Add device failed: ' + response.desc);
+            this.presentToast('Failed to modify devices: ' + response.desc);
           }
         },
         (error) => {
           this.loadingSpinner.dismiss();
           console.log(error);
-          this.presentToast('Error occurred when adding new devices. Please try again');
+          this.presentToast('Error occurred when modifying added devices. Please try again');
         }
       );
     }
+  }
+
+  deleteDevices() {
+    this.editeddeviceform.value["token"] = this.accountToken;
+    this.editeddeviceform.value["id"] = this.deviceid;
+    this.loadingSpinner.present();
+    this.http.post<ResponseStateType>(`${this.apiUrl}/deletedevices`, this.editeddeviceform.value).subscribe(
+      (response) => {
+        this.loadingSpinner.dismiss();
+        if (response.success) {
+          this.presentToast('Delete device successful');
+          this.setModalOpen(false);
+          this.navCtrl.back();
+        } else {
+          this.presentToast('Failed to delete devices: ' + response.desc);
+        }
+      },
+      (error) => {
+        this.loadingSpinner.dismiss();
+        console.log(error);
+        this.presentToast('Error occurred when deleting added devices. Please try again');
+      }
+    );
   }
 
   ionViewWillEnter() {
@@ -108,6 +133,12 @@ export class EditdevicePage implements OnInit {
     });
     toast.present();
 
+  }
+
+  isModalOpen = false;
+
+  setModalOpen(isOpen: boolean) {
+    this.isModalOpen = isOpen;
   }
 
 }
